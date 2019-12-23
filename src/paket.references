@@ -1,0 +1,5 @@
+TaskBuilder.fs
+CogniteSdk
+Thoth.Json.Net
+FsConfig
+#Microsoft.Extensions.Configuration
