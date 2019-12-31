@@ -19,7 +19,7 @@ module Model =
         /// To access the camera, the videos and the live stream
         | AccessPresence
         /// To read data coming from Healthy Home Coach (gethomecoachsdata)
-        | ReadHomecoach
+        | ReadHomeCoach
 
         override this.ToString () =
             match this with
@@ -31,12 +31,13 @@ module Model =
             | AccessCamera -> "access_camera"
             | ReadPresence -> "read_presence"
             | AccessPresence -> "access_presence"
-            | ReadHomecoach -> "read_homecoach"
+            | ReadHomeCoach -> "read_homecoach"
 
     type Auth = {
         AccessToken: string
         ExpiresIn: int
         RefreshToken: string
+        Scope: Scope seq
     }
 
     type Error = {
@@ -122,8 +123,8 @@ module Model =
             | DateMaxCo2 -> "datemaxco2"
 
     type Location = {
-        Latitude: float32
-        Longitude: float32
+        Latitude: float
+        Longitude: float
     }
 
     type Place = {
@@ -133,16 +134,16 @@ module Model =
         Location: Location
     }
 
-    type DashboardRainData = {
+    type RainData = {
         /// Rain in mm
         Rain: int
-        /// Rain measured for past 24h(mm)
+        /// Rain measured for past 24h (mm)
         SumRain24: int
         /// Rain measured for the last hour (mm)
         SumRain1: int
     }
 
-    type DashboardWindData = {
+    type WindData = {
         /// Wind strenght (km/h)
         WindStrenght: int
         /// Wind angle in degrees
@@ -151,28 +152,32 @@ module Model =
         GustStrength: int
         /// Gust angle in degrees
         GustAngle: int
-        ///
+        /// Max gust strengh (km/h)
         MaxWindStrenght: int
+        /// Max gust angle in degrees
         MaxWindAngle: int
+        /// Timestamp of max wind strength
         DateMaxWindStrength: int
+    }
+
+    type TemperatureData = {
+        Temperature: float
+        MinTemp: float
+        MaxTemp: float
+        DateMaxTemp: int
+        DateMinTemp:int
+        TempTrend: string
     }
 
     type DashboardData = {
         /// Timestamp when data was measured
         TimeUtc: int
 
-        Temperature: float
-        Humidity: int
-        MinTemp: float
-        MaxTemp: float
-        DateMaxTemp: int
-        DateMinTemp:int
-        TempTrend: string
-
+        Temperature: TemperatureData option
+        Humidity: int option
         Co2: int option
-
-        Wind: DashboardWindData option
-        Rain: DashboardRainData option
+        Wind: WindData option
+        Rain: RainData option
     }
 
     type Module = {
@@ -257,11 +262,11 @@ module Model =
         FeelLikeAlgo: int
     }
     type User = {
-        Main: string
+        Mail: string
         Administrative: Administrative
     }
 
-    type Station = {
+    type StationData = {
         Devices: Device seq
         User: User
         Status: string

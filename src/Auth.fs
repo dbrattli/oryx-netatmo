@@ -18,7 +18,7 @@ module OAuth =
     let Url = "https://api.netatmo.com/oauth2/"
 
     let decodeError (response: HttpResponseMessage) : Task<HandlerError<Error>> = task {
-        if response.Content.Headers.ContentType.MediaType.Contains "application/json" then
+        if response.Content.Headers.ContentType.MediaType = "application/json" then
             use! stream = response.Content.ReadAsStreamAsync ()
             let decoder = Error.Decoder
             let! result = decodeStreamAsync decoder stream
