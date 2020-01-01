@@ -1,34 +1,16 @@
 namespace Netatmo.Auth
 
-open System.Net.Http
-open System.Threading.Tasks
-
-open FSharp.Control.Tasks.V2.ContextInsensitive
-
 open Oryx
 open Oryx.ResponseReaders
 
 open Netatmo
 open Netatmo.Model
-
+open Netatmo.Error
 
 [<RequireQualifiedAccess>]
 module OAuth =
     [<Literal>]
     let Url = "https://api.netatmo.com/oauth2/"
-
-    let decodeError (response: HttpResponseMessage) : Task<HandlerError<SyntaxError>> = task {
-        if response.Content.Headers.ContentType.MediaType = "application/json" then
-            use! stream = response.Content.ReadAsStreamAsync ()
-            let decoder = SyntaxError.Decoder
-            let! result = decodeStreamAsync decoder stream
-            match result with
-            | Ok err -> return ResponseError err
-            | Error reason -> return Panic <| JsonDecodeException reason
-        else
-            let error = { Error = "unknown error"; Description = "" }
-            return ResponseError error
-    }
 
     let authorize (clientId: string) (redirectUri: string) (scopes: Scope seq) (state: string) =
         let query = [
@@ -42,7 +24,7 @@ module OAuth =
         >=> addQuery query
         >=> setUrl (Url + "authorize")
         >=> fetch
-        >=> withError decodeError
+        >=> withError decodeSyntaxError
         >=> json Auth.Decoder
 
     let token (clientId: string) (clientSecret: string) (code: string) (redirectUri: string) (scopes: Scope seq) =
@@ -59,7 +41,7 @@ module OAuth =
         >=> setContent content
         >=> setUrl (Url + "token")
         >=> fetch
-        >=> withError decodeError
+        >=> withError decodeSyntaxError
         >=> json Auth.Decoder
 
 
@@ -77,7 +59,7 @@ module OAuth =
         >=> setContent content
         >=> setUrl (Url + "token")
         >=> fetch
-        >=> withError decodeError
+        >=> withError decodeSyntaxError
         >=> json Auth.Decoder
 
     let refresh (clientId: string) (clientSecret: string) (refreshToken: string) =
@@ -92,5 +74,5 @@ module OAuth =
         >=> setContent content
         >=> setUrl Url
         >=> fetch
-        >=> withError decodeError
+        >=> withError decodeSyntaxError
         >=> json Auth.Decoder
