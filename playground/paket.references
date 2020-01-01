@@ -1,0 +1,3 @@
+group Playground
+    TaskBuilder.fs
+    FsConfig

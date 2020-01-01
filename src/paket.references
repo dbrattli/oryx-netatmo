@@ -1,5 +1,4 @@
-TaskBuilder.fs
-CogniteSdk
-Thoth.Json.Net
-FsConfig
-#Microsoft.Extensions.Configuration
+group Sdk
+    Oryx
+    TaskBuilder.fs
+    Thoth.Json.Net
