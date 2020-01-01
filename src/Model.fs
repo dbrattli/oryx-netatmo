@@ -40,7 +40,13 @@ module Model =
         Scope: Scope seq
     }
 
+    type SyntaxError = {
+        Error: string
+        Description: string
+    }
+
     type Error = {
+        Code: int
         Message: string
     }
 

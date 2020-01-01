@@ -31,11 +31,20 @@ module AuthExtensions =
                     Scope = get.Required.Field "scope" (Decode.array Scope.Decoder)
                 })
 
+    type SyntaxError with
+        static member Decoder : Decoder<SyntaxError> =
+            Decode.object (fun get ->
+                {
+                    Error = get.Required.Field "error" Decode.string
+                    Description = get.Required.Field "error_description" Decode.string
+                })
+
     type Error with
         static member Decoder : Decoder<Error> =
             Decode.object (fun get ->
                 {
-                    Message = get.Required.Field "error" Decode.string
+                    Code = get.Required.At [ "error"; "code" ]  Decode.int
+                    Message = get.Required.At [ "error"; "description" ] Decode.string
                 })
 
     type Administrative with

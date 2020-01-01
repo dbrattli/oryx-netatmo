@@ -17,16 +17,16 @@ module OAuth =
     [<Literal>]
     let Url = "https://api.netatmo.com/oauth2/"
 
-    let decodeError (response: HttpResponseMessage) : Task<HandlerError<Error>> = task {
+    let decodeError (response: HttpResponseMessage) : Task<HandlerError<SyntaxError>> = task {
         if response.Content.Headers.ContentType.MediaType = "application/json" then
             use! stream = response.Content.ReadAsStreamAsync ()
-            let decoder = Error.Decoder
+            let decoder = SyntaxError.Decoder
             let! result = decodeStreamAsync decoder stream
             match result with
             | Ok err -> return ResponseError err
             | Error reason -> return Panic <| JsonDecodeException reason
         else
-            let error = { Message = "Unknown error" }
+            let error = { Error = "unknown error"; Description = "" }
             return ResponseError error
     }
 
@@ -38,7 +38,7 @@ module OAuth =
             "state", state
         ]
 
-        GET
+        POST
         >=> addQuery query
         >=> setUrl (Url + "authorize")
         >=> fetch
